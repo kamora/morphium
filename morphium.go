@@ -12,13 +12,12 @@ type Morphable interface {
 }
 
 func Morph[T Morphable](value string) (T, error) {
-	var def T
 	switch reflect.TypeFor[T]().Kind() {
 
 	case reflect.Int:
 		converted, err := strconv.ParseInt(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(int(converted)).(T), nil
@@ -27,7 +26,7 @@ func Morph[T Morphable](value string) (T, error) {
 		converted, err := strconv.ParseInt(value, base(&value), 8)
 
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(int8(converted)).(T), nil
@@ -36,7 +35,7 @@ func Morph[T Morphable](value string) (T, error) {
 		converted, err := strconv.ParseInt(value, base(&value), 16)
 
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(int16(converted)).(T), nil
@@ -45,7 +44,7 @@ func Morph[T Morphable](value string) (T, error) {
 		converted, err := strconv.ParseInt(value, base(&value), 32)
 
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(int32(converted)).(T), nil
@@ -54,7 +53,7 @@ func Morph[T Morphable](value string) (T, error) {
 		converted, err := strconv.ParseInt(value, base(&value), 64)
 
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(converted).(T), nil
@@ -62,7 +61,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Uint:
 		converted, err := strconv.ParseUint(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(uint(converted)).(T), nil
@@ -70,7 +69,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Uint8:
 		converted, err := strconv.ParseUint(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(uint8(converted)).(T), nil
@@ -78,7 +77,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Uint16:
 		converted, err := strconv.ParseUint(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(uint16(converted)).(T), nil
@@ -86,7 +85,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Uint32:
 		converted, err := strconv.ParseUint(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(uint32(converted)).(T), nil
@@ -94,7 +93,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Uint64:
 		converted, err := strconv.ParseUint(value, base(&value), 0)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(converted).(T), nil
@@ -102,7 +101,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Float32:
 		converted, err := strconv.ParseFloat(value, 32)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(float32(converted)).(T), nil
@@ -110,7 +109,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Float64:
 		converted, err := strconv.ParseFloat(value, 64)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(converted).(T), nil
@@ -118,7 +117,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Complex64:
 		converted, err := strconv.ParseComplex(value, 64)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(complex64(converted)).(T), nil
@@ -126,7 +125,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Complex128:
 		converted, err := strconv.ParseComplex(value, 128)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(converted).(T), nil
@@ -134,7 +133,7 @@ func Morph[T Morphable](value string) (T, error) {
 	case reflect.Bool:
 		converted, err := strconv.ParseBool(value)
 		if err != nil {
-			return def, err
+			return Default[T](), err
 		}
 
 		return any(converted).(T), nil
@@ -143,8 +142,13 @@ func Morph[T Morphable](value string) (T, error) {
 		return any(value).(T), nil
 
 	default:
-		return def, fmt.Errorf("unsupported conversion for %s", reflect.TypeFor[T]().Name())
+		return Default[T](), fmt.Errorf("unsupported conversion for %s", reflect.TypeFor[T]().Name())
 	}
+}
+
+func Default[T Morphable]() T {
+	var result T
+	return result
 }
 
 func base(value *string) int {
